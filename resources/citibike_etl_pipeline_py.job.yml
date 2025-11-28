@@ -1,0 +1,67 @@
+resources:
+  jobs:
+    sample_py:
+      name: citibke_etl_pipeline_py
+      tasks:
+        # - task_key: 00_whl_upload
+        #  python_wheel_task:
+        #    package_name: dab_project
+        #    entry_point: main
+        #  job_cluster_key: Standard_D4ds_v4
+        #  libraries:
+        #     - whl: ../dist/*.whl
+        - task_key: 01_bronze_citibike
+          # depends_on:
+          #  - task_key: 00_whl_upload
+          spark_python_task:
+            python_file: ../src/citibike_ETL/Scripts/01_bronze_citibike.py
+            parameters:
+              - "{{job.id}}"
+              - "{{job.run_id}}"
+              - "{{task.run_id}}"
+              - "{{job.start_time.iso_datetime}}"
+              - "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+        - task_key: 02_silver_citibike
+          depends_on:
+            - task_key: 01_bronze_citibike
+          spark_python_task:
+            python_file: ../src/citibike_ETL/Scripts/02_silver_citibike.py
+            parameters:
+              - "{{job.id}}"
+              - "{{job.run_id}}"
+              - "{{task.run_id}}"
+              - "{{job.start_time.iso_datetime}}"
+              - "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+          libraries:
+            - whl: ../dist/*.whl
+        - task_key: 03_gold_citibike_daily_summary
+          depends_on:
+            - task_key: 02_silver_citibike
+          spark_python_task:
+            python_file: ../src/citibike_ETL/Scripts/03_gold_citibike_daily_summary.py
+            parameters:
+              - "{{job.id}}"
+              - "{{job.run_id}}"
+              - "{{task.run_id}}"
+              - "{{job.start_time.iso_datetime}}"
+              - "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+        - task_key: 03_gold_citibike_daily_station_performance
+          depends_on:
+            - task_key: 02_silver_citibike
+          spark_python_task:
+            python_file: ../src/citibike_ETL/Scripts/03_gold_citibike_daily_station_performance.py
+            parameters:
+              - "{{job.id}}"
+              - "{{job.run_id}}"
+              - "{{task.run_id}}"
+              - "{{job.start_time.iso_datetime}}"
+              - "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+      job_clusters:
+        - job_cluster_key: Standard_D4ds_v4
+          new_cluster: "${var.Standard_D4ds_v4}"
+      queue:
+        enabled: true

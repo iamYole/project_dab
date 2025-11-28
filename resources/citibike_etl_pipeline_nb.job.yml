@@ -1,0 +1,54 @@
+resources:
+  jobs:
+    citibike_etl_pipeline_nb:
+      name: citibike_etl_pipeline_nb
+      tasks:
+        - task_key: 01_bronze_citibike
+          notebook_task:
+            notebook_path: ../src/citibike_ETL/Notebooks/01_bronze.ipynb
+            base_parameters:
+              pipeline_id: "{{job.id}}"
+              run_id: "{{job.run_id}}"
+              task_id: "{{task.run_id}}"
+              processed_timestamp: "{{job.start_time.iso_datetime}}"
+              catalog: "${var.catalog}"
+            source: WORKSPACE
+          job_cluster_key: Standard_D4ds_v4
+        - task_key: 02_silver_citibike
+          depends_on:
+            - task_key: 01_bronze_citibike
+          notebook_task:
+            notebook_path: ../src/citibike_ETL/Notebooks/02_silver.ipynb
+            base_parameters:
+              pipeline_id: "{{job.id}}"
+              run_id: "{{job.run_id}}"
+              task_id: "{{task.run_id}}"
+              processed_timestamp: "{{job.start_time.iso_datetime}}"
+              catalog: "${var.catalog}"
+            source: WORKSPACE
+          job_cluster_key: Standard_D4ds_v4
+          libraries:
+            - whl: ../dist/*.whl
+        - task_key: 03_gold_daily_ride_summary
+          depends_on:
+            - task_key: 02_silver_citibike
+          notebook_task:
+            notebook_path: ../src/citibike_ETL/Notebooks/03.1_gold_daily_ride_summary.ipynb
+            source: WORKSPACE
+            base_parameters:
+              catalog: "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+        - task_key: 03_gold_daily_station_performance
+          depends_on:
+            - task_key: 02_silver_citibike
+          notebook_task:
+            notebook_path: ../src/citibike_ETL/Notebooks/03.2_gold_daily_station_performance.ipynb
+            source: WORKSPACE
+            base_parameters:
+              catalog: "${var.catalog}"
+          job_cluster_key: Standard_D4ds_v4
+      job_clusters:
+        - job_cluster_key: Standard_D4ds_v4
+          new_cluster: "${var.Standard_D4ds_v4}"
+      queue:
+        enabled: true

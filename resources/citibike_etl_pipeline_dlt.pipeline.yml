@@ -1,0 +1,19 @@
+resources:
+  pipelines:
+    citibike_etl_pipeline_dlt:
+      name: citibike_etl_pipeline_dlt
+      # pipeline_type: WORKSPACE
+      development: "${var.dev_flag}"
+      continuous: false
+      catalog: "${var.catalog}"
+      target: "${var.catalog}"
+      photon: true
+      serverless: true
+      channel: CURRENT
+      configuration:
+        catalog: "${var.catalog}"
+      root_path: ../src/citibike_ETL/DLT/
+      libraries:
+        - file:
+            path: ../src/citibike_ETL/DLT/citibike_dlt_pipeline.py
+

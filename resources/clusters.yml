@@ -1,0 +1,13 @@
+variables:
+    Standard_D4ds_v4:
+        type: "complex"
+        default:
+            cluster_name: ""
+            spark_version: 17.3.x-scala2.13
+            node_type_id: Standard_D4ds_v4
+            spark_env_vars:
+                PYSPARK_PYTHON: /databricks/python3/bin/python3
+            data_security_mode: DATA_SECURITY_MODE_DEDICATED
+            runtime_engine: STANDARD
+            kind: CLASSIC_PREVIEW
+            is_single_node: true
