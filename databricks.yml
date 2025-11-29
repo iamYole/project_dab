@@ -47,7 +47,7 @@ targets:
       # We explicitly deploy to /Workspace/Users/gideonovuzorie@hotmail.com to make sure we only have a single copy.
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
     permissions:
-      - user_name: gideonovuzorie@hotmail.com
+      - service_principal_name: 3b91d4a7-4202-4639-b35d-cf422eede84a
         level: CAN_MANAGE
   prod:
     mode: production
@@ -60,5 +60,5 @@ targets:
       # We explicitly deploy to /Workspace/Users/gideonovuzorie@hotmail.com to make sure we only have a single copy.
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
     permissions:
-      - user_name: gideonovuzorie@hotmail.com
+      - service_principal_name: 4f1b7f53-55f8-4293-8d6e-109af58c4b6f
         level: CAN_MANAGE
