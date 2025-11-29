@@ -12,3 +12,4 @@ scratch/**
 .venv_spark
 .DS_Store
 .vscode/
+htmlcov/
