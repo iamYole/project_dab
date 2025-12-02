@@ -82,7 +82,7 @@ jobs:
                     --target prod \
                     --profile PROD
 
-            - name: Create Release
+            {# - name: Create Release
               uses: softprops/action-gh-release@v1
               with:
                 tag_name: v1.0.1
@@ -91,4 +91,4 @@ jobs:
                 prerelease: false
                 generate_release_notes: true
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #}
