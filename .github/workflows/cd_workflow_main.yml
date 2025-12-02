@@ -81,3 +81,14 @@ jobs:
                 databricks bundle deploy \
                     --target prod \
                     --profile PROD
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                tag_name: v${{ date('YYYYMMDD') }}
+                name: "Release v1.0.${{ github.run_number }}"
+                draft: false
+                prerelease: false
+                generate_release_notes: true
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
